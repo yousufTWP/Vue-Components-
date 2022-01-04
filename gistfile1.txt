@@ -1,0 +1,27 @@
+<?php
+
+namespace Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use App\Mail\WelcomeNewCustomer;
+use Illuminate\Support\Facades\Mail;
+
+class MailerTest extends TestCase
+{
+   public function testSending()
+   {
+       Mail::fake();
+
+       Mail::send(new WelcomeNewCustomer());
+
+       Mail::assertSent(WelcomeNewCustomer::class);
+
+       Mail::assertSent(WelcomeNewCustomer::class, function ($mail) {
+           $mail->build();
+           $this->assertTrue($mail->hasFrom('hello@mailtrap.io'));
+           $this->assertTrue($mail->hasCc('hola@mailtrap.io'));
+
+           return true;
+       });
+   }
+}
